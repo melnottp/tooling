@@ -139,6 +139,30 @@ resource "flexibleengine_networking_secgroup_v2" "secgroup" {
   description = "terraform security group acceptance test"
 }
 
+# Create Bastion Host
+resource "flexibleengine_compute_instance_v2" "bastion" {
+  depends_on = [time_sleep.wait_for_vpc]
+  name              = "${var.project}-bastion-${data.terraform_remote_state.admin-zone.outputs.random_id}"
+  flavor_id         = "t2.small"
+  key_pair          = flexibleengine_compute_keypair_v2.keypair.name
+  security_groups   = [flexibleengine_networking_secgroup_v2.secgroup.name]
+  user_data = data.template_cloudinit_config.config.rendered
+  availability_zone = "eu-west-0a"
+  network {
+    uuid = flexibleengine_networking_network_v2.front_net.id
+  }
+  block_device { # Boots from volume
+    uuid                  = "c2280a5f-159f-4489-a107-7cf0c7efdb21"
+    source_type           = "image"
+    volume_size           = "40"
+    boot_index            = 0
+    destination_type      = "volume"
+    delete_on_termination = true
+    #volume_type           = "SSD"
+  }
+}
+
+
 #Create PostgreSQL DB for Superset in CCE
 resource "flexibleengine_rds_instance_v3" "postgre" {
   depends_on = [flexibleengine_vpc_v1.vpc]

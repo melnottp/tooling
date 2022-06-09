@@ -54,3 +54,9 @@ variable "dns_zone_name" {
   default = "tooling.services"
   description = "RDS primary AZ"
 }
+
+variable "cloud_init_path" {
+  description = "Path to directory with custom Cloud-init configuration. Cloud-init cloud config format is expected. Only *.yml and *.yaml files will be read."
+  default     = "./"
+}
+
