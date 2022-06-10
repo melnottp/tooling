@@ -139,6 +139,26 @@ resource "flexibleengine_networking_secgroup_v2" "secgroup" {
   description = "terraform security group acceptance test"
 }
 
+resource "flexibleengine_networking_secgroup_rule_v2" "secgroup_rule_ingress4" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = "${var.ssh_port}"
+  port_range_max    = "${var.ssh_port}"
+  remote_ip_prefix  = "${data.terraform_remote_state.admin-zone.outputs.guacamole_private_IP}/32"
+  security_group_id = flexibleengine_networking_secgroup_v2.secgroup.id
+}
+
+resource "flexibleengine_networking_secgroup_rule_v2" "secgroup_rule_rdp" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = "${var.rdp_port}"
+  port_range_max    = "${var.rdp_port}"
+  remote_ip_prefix  = "${data.terraform_remote_state.admin-zone.outputs.guacamole_private_IP}/32"
+  security_group_id = flexibleengine_networking_secgroup_v2.secgroup.id
+}
+
 # Create Bastion Host
 resource "flexibleengine_compute_instance_v2" "bastion" {
   depends_on = [time_sleep.wait_for_vpc]

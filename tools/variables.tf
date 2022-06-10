@@ -60,3 +60,13 @@ variable "cloud_init_path" {
   default     = "./"
 }
 
+variable "ssh_port" {
+  default = "4444"
+  description = "ssh port to access Bastion."
+}
+
+variable "rdp_port" {
+  default = "3389"
+  description = "ssh port to access Bastion."
+}
+
